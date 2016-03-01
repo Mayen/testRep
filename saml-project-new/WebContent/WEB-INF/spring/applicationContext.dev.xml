@@ -1,0 +1,75 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation=
+       "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+
+	<!-- bean For BCBS SSO login -->
+
+	<bean id="bcbsSsoLoginProps" lazy-init="true" scope="singleton"
+		class="com.bcbs.saml.BcbsLoginProps">
+		<property name="keystore" value="/keys/BCBS/saml_assertion_sign_cert.jks" />
+		<property name="keystorePass" value="password" />
+		<property name="keystoreAlias" value="idp" />
+		<property name="issuer" value="https://appsps.bcbsnc.com/FIM/sps/BCBSNCWFIDP/saml20" />
+		<property name="audienceRestriction" value="SP-EPLN-POLARIS-BCBSNC-PREPROD" />
+		<property name="recipientURL" value="http://dmawbicobo01.bico.edm:8080/BOE/BI/custom.jsp" />
+		
+		<property name="memberAttribute_BCBS">
+				<map>
+						<entry key="userId" value="UserID" />
+						<entry key="secretKey" value="SecretKey"  />
+						
+				</map>
+		</property>  
+		
+		<property name="partnerKeystore" value="/keys/BCBS/saml_response_encrypt_cert.jks"/>
+        <property name="partnerKeystorePass" value="password"/>
+        <property name="partnerKeystoreAlias" value="idp"/>    
+		
+		<property name="signatureRequired"   value="true"/>
+		<property name="encryptionRequired"   value="false"/>
+		
+		<property name="samlPostURL" value="http%3A%2F%2Fdmawbicobo01.bico.edm:8080%2FBOE%2FBI%2Fcustom.jsp" /> 
+		<!-- <property name="samlPostURL" value="http%3A%2F%2Flocalhost:@WEBLOGIC.PORT@%2FportalLoginTestSaml.jspx" />  -->
+		<!-- <property name="samlPostURL" value="http://dmawbicobo01.bico.edm:8080/BOE/BI/custom.jsp" /> -->
+	</bean>
+	
+	
+	
+	
+	<!-- bean For mock  test  (internal) -->
+	
+	<bean id="bcbsMockLoginProps" lazy-init="true" scope="singleton"
+		class="com.bcbs.saml.BcbsLoginProps">
+		<property name="keystore" value="/keys/BCBS/saml_assertion_sign_cert.jks" />
+		<property name="keystorePass" value="password" />
+		<property name="keystoreAlias" value="idp" />
+		<property name="issuer" value="https://appsps.bcbsnc.com/FIM/sps/BCBSNCWFIDP/saml20" />
+		<property name="audienceRestriction" value="SP-EPLN-POLARIS-BCBSNC-PREPROD" />
+		<property name="recipientURL" value="http://dmawbicobo01.bico.edm:8080/BOE/BI/custom.jsp" />
+		
+		<property name="memberAttribute_BCBS">
+				<map>
+						<entry key="userId" value="UserID" />
+						<entry key="secretKey" value="SecretKey"  />
+		    	</map>
+		</property>  
+		
+		<property name="partnerKeystore" value="/keys/BCBS/saml_response_encrypt_cert.jks"/>
+        <property name="partnerKeystorePass" value="password"/>
+        <property name="partnerKeystoreAlias" value="idp"/>
+		
+		<property name="signatureRequired"   value="true"/>
+		<property name="encryptionRequired"   value="false"/>
+		
+		<!-- <property name="samlPostURL" value="http%3A%2F%2Flocalhost:8080%2Fsaml-project-@BUILD_ENVIRONMENT@%2FportalLoginTestSaml.jspx" />  -->
+		<property name="samlPostURL" value="http%3A%2F%2Flocalhost:8080%2Fsaml-project%2FportalLoginTestSaml.jspx" /> 
+		<!-- <property name="samlPostURL" value="http%3A%2F%2Flocalhost:@WEBLOGIC.PORT@%2FportalLoginTestSaml.jspx" />  -->
+		<!-- <property name="samlPostURL" value="http://dmawbicobo01.bico.edm:8080/BOE/BI/custom.jsp" /> -->
+	</bean>
+	
+	<!-- <import resource="spring-datasource.xml" /> -->
+	
+
+</beans>
