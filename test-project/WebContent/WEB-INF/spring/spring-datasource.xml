@@ -1,0 +1,50 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xmlns:p="http://www.springframework.org/schema/p"
+	 xmlns:context="http://www.springframework.org/schema/context"
+     xmlns:cache="http://www.springframework.org/schema/cache"     
+	  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+  
+	<!-- Staring bean configuration For datasource -->
+
+
+	<bean id="oracleDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:db11ga" />
+		<property name="username" value="root" />
+		<property name="password" value="password" />
+	</bean>
+	<bean id="mySQLdataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/ssbd" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+
+	<bean id="userDAO" class="com.bcbs.db.dao.UserDaoImpl">
+		<property name="dataSource" ref="mySQLdataSource" />
+	</bean>
+	
+<!-- Ending  bean configuration For datasource -->
+
+
+ <!-- Starting Ehcache library setup -->
+ 
+	<!--  <cache:annotation-driven />
+	 Do the component scan path
+	 <context:component-scan base-package="caching" />
+	 
+	 <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" 
+	  p:cacheManager-ref="ehcache"/>
+	 <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" 
+	     p:configLocation="classpath:ehcache.xml"  
+	     p:shared="true"/> -->
+     
+<!-- Ending Ehcache library setup -->
+
+</beans>

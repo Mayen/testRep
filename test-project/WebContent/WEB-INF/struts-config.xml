@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+ 
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "struts-config_1_2.dtd">
+
+<struts-config>
+	<form-beans>
+		<form-bean name="LoginForm" type="com.bcbs.view.http.struts.form.LoginForm" />
+	</form-beans>
+
+
+	<global-exceptions>
+		<exception key="global.error.msg" type="java.lang.NullPointerException"
+			path="/WEB-INF/jsp/error.jsp" />
+	</global-exceptions>
+
+	<global-forwards></global-forwards>
+
+	<action-mappings>
+		
+		<!-- This action is for external use i.e: BCBS SSO login to BOE BI application -->
+		
+		<action path="/loginSeamless2"
+			type="com.bcbs.view.http.struts.action.external.LoginSeamlessSaml2Action">
+			<forward name="success" path="/WEB-INF/jsp/boSamlPost.jsp" redirect="false" />			
+			<!--  <forward name="ssoFailure" path="/WEB-INF/jsp/error.jsp" redirect="false" />  -->
+		</action>
+
+
+		<!-- These actions are for mock test  (Internal)  -->
+
+		<action path="/login" name="LoginForm" validate="false" input="/index.jspx"
+			type="com.bcbs.view.http.struts.action.external.BcbsPortalSaml2LoginAction">
+			<forward name="success" path="/WEB-INF/jsp/mock/login.jsp"
+				redirect="false" />
+			<forward name="ssoFailure" path="/WEB-INF/jsp/error.jsp" />
+			<!-- <forward name="ssoFailure" path="/WEB-INF/jsp/error.jsp" redirect="true" /> -->
+
+		</action>
+		
+		<action path="/loginSubmit" name="LoginForm" validate="false" input="/index.jspx"
+			type="com.bcbs.view.http.struts.action.external.BcbsPortalSaml2LoginSubmitAction">
+			<forward name="success" path="/WEB-INF/jsp/mock/bcbsPortalSamlMockPost.jsp"
+				redirect="false" />
+			<forward name="ssoFailure" path="/index.jsp" />
+			<!-- <forward name="ssoFailure" path="/WEB-INF/jsp/error.jsp" redirect="true" /> -->
+
+		</action>
+
+		<action path="/portalLoginTestSaml"
+			type="com.bcbs.view.http.struts.action.external.BcbsPortalSaml2LoginTestAction"
+			scope="request" unknown="false" validate="false">
+			<forward name="success" path="/WEB-INF/jsp/mock/boSamlMockPost.jsp" redirect="false" />
+			 <!-- <forward name="ssoFailure" path="/WEB-INF/jsp/error.jsp" redirect="false" />  -->
+
+		</action>
+		
+		<!-- End of mock test actions  -->
+
+	</action-mappings>
+
+
+	<message-resources parameter="MessageResource"></message-resources>
+
+</struts-config>

@@ -1,0 +1,321 @@
+<?xml version="1.0"?>
+
+<project name="saml-project" basedir=".." default="all">
+
+	<loadfile property="version" srcFile="build/saml-project.version" />
+
+	<tstamp>
+		<format property="TODAY" pattern="MM-dd-yy" />
+	</tstamp>
+	<tstamp>
+		<format property="today-time" pattern="MM-dd-yy HH:mm:ss" />
+	</tstamp>
+	<tstamp>
+		<format property="timestamp" pattern="MMddyy.hh.mm.ss" />
+	</tstamp>
+
+	<property name="builddir" value="${basedir}/build" />
+
+	<property name="srcjavadir" value="${basedir}/src" />
+
+	<property name="srcwebdir" value="${basedir}/WebContent" />
+	<property name="srcresourcesdir" value="${basedir}/resources" />
+	<property name="eclipseoutputdir" value="${basedir}/output" />
+		
+	
+	<property name="outputdir" value="${basedir}/../Membernetoutput" />
+	<property name="outputclassesdir" value="${outputdir}/WEB-INF/classes" />
+	<property name="outputwebinfdir" value="${outputdir}/WEB-INF" />
+	<property name="earapp.target" value="${basedir}/../Membernetoutput/thankyou-ear" />
+	
+	<!--
+      ## Isolate the environment 
+      -->
+  <property environment="env" />
+	<property file="build/build.generated.properties" />
+
+	<!--
+       ## Define the compile paths required for production source
+      -->
+	<path id="classpath-ref">
+		<fileset dir="${srcwebdir}/WEB-INF/lib">
+			<include name="*.jar" />
+			</fileset>
+	</path>
+
+	
+
+	<!--
+      ## Default all task only produces a war file so that we don't accidentally
+      ## kick off a deploy.
+      -->
+	<target name="all">
+		<echo message="Please select the specific target that you want" />
+	</target>
+
+	
+
+	<!--
+      ## Initialize the build environment.
+      -->
+	<target name="build-init">
+
+		<!-- echoproperties/ -->
+
+		<mkdir dir="${outputdir}" />
+		
+	</target>
+
+
+
+
+
+	<!--
+      ## Generate the runtime files from templates. This process copies
+      ## template files to generated files which are then used in the 
+      ## running of the system.
+      -->
+	<target name="build-template">
+		<!--
+          ## Log the time that this build occured so that we can
+          ## see the last build time on the deployment web site.
+          -->
+
+		
+		<filter token="VERSION" value="${version}" />
+		<filter token="BUILDTIME" value="${today-time}" />
+		
+
+		<filter token="BUILDDIR" value="${builddir}" />
+		
+		<filter token="BUILD_ENVIRONMENT" value="${saml-project.environment}" />
+		
+		
+		
+		
+
+		<!--
+          ## Build the deployment files specific for this machine so that 
+          ## we can capture all known runtime environments.
+          -->
+
+
+		<copy overwrite="true" force="true"  filtering="true" file="${srcwebdir}/WEB-INF/web.xml" tofile="${outputwebinfdir}/web.xml" />
+		<filter token="SAML.POST.URL" value="${saml.post.url}" />
+		<filter token="SAML.USERS.FILE.URL" value="${saml.authenticated.users.file.path}" />
+		
+		<!--
+          ## Copy the applicationContext file into place based on the
+          ## configuration of the build properties.
+          -->
+		<copy overwrite="true" force="true"  filtering="true" file="${srcwebdir}/WEB-INF/spring/applicationContext.${saml-project.environment}.xml" tofile="${outputwebinfdir}/spring/applicationContext.generated.xml" />
+		<copy overwrite="true" force="true"  filtering="true" file="${srcwebdir}/WEB-INF/spring/spring-datasource.xml" tofile="${outputwebinfdir}/spring/spring-datasource.xml" />
+		<!--<copy overwrite="true" force="true"  filtering="true" file="${srcwebdir}/WEB-INF/spring/ehcache.xml" tofile="${outputwebinfdir}/classes/ehcache.xml" />
+		 -->			
+		<copy overwrite="true" force="true"  filtering="true" file="${srcwebdir}/WEB-INF/spring/fileConfigContext.xml" tofile="${outputwebinfdir}/spring/fileConfigContext.xml" />
+					
+		<!--
+          ## Apply the environment logging level to the log4j properties
+          ## file. Also make this file available to the eclipse runtime.
+          ## We are creating a log4j properties file under the default name
+          ## and the project specific name. The default name will be used
+          ## by libraries that are run prior to our initializing and loading
+          ## the project specific version.
+          -->
+		<filter token="SAML-PROJECT.LOGGINGLEVEL" value="${saml-project.loggingLevel}" />
+
+		<filter token="SAML-PROJECT.LOGGINGAPPENDER" value="${saml-project.loggingAppender}" />
+		<filter token="SAML-PROJECT.LOGGINGFILENAME" value="${saml-project.loggingFilename}" />
+		
+		
+		<!-- <copy overwrite="true" force="true"  filtering="true" file="${srcresourcesdir}/log4j.template.properties" tofile="${outputclassesdir}/log4j.properties" /> -->
+	
+		<copy overwrite="true" force="true"  filtering="true" file="${srcresourcesdir}/log4j.template.xml" tofile="${outputclassesdir}/log4j.xml" />
+	</target>
+
+	<!--
+      ## Delete the generated files from the output directory
+      -->
+	<target name="build-clean" description="Clean the output folder">
+		<delete dir="${outputdir}"/>			
+	</target>
+
+	<!--
+      ## Targets to install your own build properties file.
+      -->
+  <!-- 
+    This copy is problematic in the TFS Build environment.  The sources are copied to the build folder, which is read-only.
+    We're gonna need another approach for generating the build.generated.properties file, perhaps in a static folder on the build server.
+  -->
+
+	
+	<target name="!build-install-nsumon">
+				<copy overwrite="true" force="true" file="${builddir}/build.nsumon.properties" tofile="${builddir}/build.generated.properties" />
+
+				
+	</target>
+	
+	<target name="build-install-dev">
+		<copy overwrite="true" force="true" file="${builddir}/build.dev.properties" tofile="${builddir}/build.generated.properties" />
+		
+	</target>
+	<target name="build-install-qa">
+		<copy overwrite="true" force="true" file="${builddir}/build.qa.properties" tofile="${builddir}/build.generated.properties" />
+		
+	</target>
+	<target name="build-install-uat">
+		<copy overwrite="true" force="true" file="${builddir}/build.uat.properties" tofile="${builddir}/build.generated.properties" />
+		
+	</target>
+
+	<target name="build-install-fut">
+		<copy overwrite="true" force="true" file="${builddir}/build.fut.properties" tofile="${builddir}/build.generated.properties" />
+		
+	</target>
+
+
+	
+	
+
+	<target name="build-install-prod">
+		<copy overwrite="true" force="true" file="${builddir}/build.prod.properties" tofile="${builddir}/build.generated.properties" />
+		
+	</target>
+	
+
+	<!--
+      ## Compile all the production source code.
+      -->
+	<target name="build-compile-src" depends="build-init">
+
+		<mkdir dir="${outputclassesdir}" />
+
+		<antcall inheritrefs="true" target="dependless-compile">
+			<param name="compileSourceDir" value="${basedir}/src" />
+			<param name="compileDestDir" value="${outputclassesdir}" />
+		</antcall>
+
+		
+	</target>
+
+	
+
+	<target name="build-compile-resources" depends="build-init">
+
+		
+				
+		
+		<copy overwrite="true" force="true" filtering="true"   todir="${outputdir}">
+
+			<fileset dir="${srcwebdir}">
+				<exclude name="WEB-INF/lib/servlet*.jar"/>
+				<exclude name="WEB-INF/lib/jsp*.jar"/>
+				
+				<include name="WEB-INF/*.xml" />
+				<include name="WEB-INF/lib/*.jar" />
+				
+				<include name="META-INF/*.MF" />
+				<include name="**/*.jsp" />
+				
+			</fileset>
+			<fileset dir="${srcwebdir}">
+				<include name="WEB-INF/**/*.dtd" />
+				<include name="WEB-INF/**/*.tld" />
+			</fileset>
+			
+		</copy>
+
+		<copy overwrite="true" force="true" todir="${outputclassesdir}">
+			<fileset dir="${srcresourcesdir}">
+				<exclude name="*template*.xml"/>
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		
+		
+		
+		
+		<copy overwrite="true" force="true" filtering="true" file="${srcwebdir}/WEB-INF/spring/applicationContext.common.bean.xml" tofile="${outputwebinfdir}/spring/applicationContext.common.bean.xml" />
+				
+				
+	</target>
+
+
+
+	
+	<!--
+      ## saml-project war files
+      ##
+      ## Build a saml-project war file that includes the test and source web 
+      ## folders so that we can combine our test and production code into one
+      ## deployment.
+      -->
+	<target name="build-saml-project-war" depends=" dependless-build-war" />
+
+
+
+	<target name="dependless-build-war" depends="build-clean, build-compile-src,build-compile-resources,build-template">
+
+		<delete>
+			<fileset dir="${builddir}" includes="${builddir}/saml-project.war" />
+		</delete>
+
+		<jar jarfile="${builddir}/saml-project.war">
+
+			
+			
+			
+			<fileset dir="${outputdir}">
+								
+				<include name="**/*.*" />
+			</fileset>
+					
+		</jar>
+	</target>
+
+
+	
+
+	
+
+	
+		
+
+	<!--
+      ## Copy the generated war file to the WebLogic app server
+      -->
+	<!-- <target name="!deploy-to-tomcat" depends="build-ty-web-war-no-imges">
+
+		<echo message="Deploying to ${weblogic.applicationsdir}" />
+
+		<delete failonerror="false" file="${weblogic.applicationsdir}\citi-${thankyou.environment}.war" />
+		
+		
+		<copy file="${builddir}/citi-${thankyou.environment}.war" todir="${weblogic.applicationsdir}" />
+		
+	</target>   -->
+	
+
+	<!--
+      ## Dependless targets can be called from the main targets with 
+      ## predictable results. They serve to isolate common functionality.
+      -->
+	<target name="dependless-compile">
+
+		<echo message="Current java version running ant: ${ant.java.version}" />
+		<echo message="Source: ${compileSourceDir}" />
+		<echo message="Destination: ${compileDestDir}" />
+		<echo message="JavaHome: ${env.JAVA_HOME}" />
+		<javac srcdir="${compileSourceDir}" destdir="${compileDestDir}" includeAntRuntime="false" deprecation="true" optimize="true" debug="true" fork="true">
+
+			<classpath refid="classpath-ref" />
+		</javac>
+	</target>
+	
+	
+
+	
+
+
+</project>
