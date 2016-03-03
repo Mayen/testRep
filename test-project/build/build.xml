@@ -272,6 +272,13 @@
 			</fileset>
 					
 		</jar>
+		
+		<delete>
+					<fileset dir="F:\soft\apache-tomcat-7.0.56\webapps" includes="F:\soft\apache-tomcat-7.0.56\webapps\saml-project" />
+		</delete>
+		
+		<copy overwrite="true" force="true" filtering="true" file="${builddir}/saml-project.war" todir="F:\soft\apache-tomcat-7.0.56\webapps" />
+				
 	</target>
 
 
