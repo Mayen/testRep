@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to="gwt_five">
-  <!-- Inherit our applications main module.                      -->
+  <!-- Inherit our applications mainghghfg module.                      -->
   <inherits name='com.mv.gwt_five.gwt_five' />
 
   <!-- Specify the path to any remote services.                   -->
