@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to="gwt_five">
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='com.mv.gwt_five.gwt_five' />
+
+  <!-- Specify the path to any remote services.                   -->
+  <servlet path="/gwt_five/greet" class="com.mv.gwt_five.server.GreetingServiceImpl" />
+
+</module>
